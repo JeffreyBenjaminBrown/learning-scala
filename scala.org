@@ -1,0 +1,87 @@
+* TODO resume here
+https://www.scala-exercises.org/scala_tutorial/structuring_information
+* How to clone some of these projects
+sbt new scala/hello-world.g8
+sbt new scala/scalatest-example.g8
+* some sbt commands
+sbt new <template>
+sbt compile # optional? can simply run without first compiling
+sbt ~run    # reruns after each change
+sbt run
+sbt test
+* Scala syntax
+** function application
+*** operators are just symbol-named methods
+ 3 + 2 == 3.+(2)
+
+*** any method, not just symbol-named ones, can be used infix
+ 1.to(10) == 1 to 10
+** definitions
+*** of non-function values
+ val x = 3
+*** of functions
+Return type is optional.
+def power(x: Double, y: Int): Double = ...
+*** "def statements" are reevaluated at each call
+whereas "val" statements are evaluated once.
+"def" statements can also be used to define (static) values,
+but (I'm guessing) it's inefficient.
+** evaluation
+*** call-by-name ~ call-by-value ~~~ top-down ~ bottom-up
+*** Scala is "usually" call-by-value
+Which I think means strict.
+But they mention call-by-name (lazy?) as if it is possible:
+https://www.scala-exercises.org/scala_tutorial/definitions_and_evaluation
+
+** scope
+*** the last elt in a {}-block is its value
+*** definitions in a block
+are accessible only inisde it
+shadow outside names
+*** functions can use blocks to define private subfunctions
+def sqrt(x: Double) = {
+  def sqrtIter(guess: Double): Double =
+    if (isGoodEnough(guess, x)) guess
+    else sqrtIter(improve(guess, x), x)
+
+  def improve(guess: Double) =
+    (guess + x / guess) / 2
+
+  def isGoodEnough(guess: Double) =
+    abs(square(guess) - x) < 0.001
+
+  sqrtIter(1.0)
+}
+*** semicolons can separate statements on the same line
+*** use parens to write multi-line expressions
+or put the operator at the end of the first line
+*** the top-level objects of a file are "objects"
+and there care be more than one in a file, unlike Java
+*** packages
+**** like-packaged objects share
+if a statement like
+  package foo
+appears at the top of two files, 
+then their definitions are available to each other.
+**** fully qualified names require no import statements
+package quux
+object Quux {
+  foo.Bar.someMethod // foo is the package name
+}
+**** import statements let you omit most of a name
+package quux
+import foo.Bar
+object Quux {
+  Bar.someMethod
+}
+*** automatic imports
+All members of package scala
+All members of package java.lang
+All members of the singleton object scala.Predef.
+* tail-recursion
+** to qualify, a function must
+call itself as the last thing it does -- and not, say, 
+return the product of something with the call to itself
+** a helpful example
+https://www.scala-exercises.org/scala_tutorial/tail_recursion
+at the bottom of the page they rewrite factorial to be tail-rec

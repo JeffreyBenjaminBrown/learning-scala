@@ -1,0 +1,14 @@
+A trick to quickly edit a Docker-locked file from the host system:
+  https://stackoverflow.com/a/26915343
+
+sudo docker build -f Dockerfile -t                       \
+  jeffreybbrown/tax.co:new .                             \
+  | tee logs/"build-log.`date`.txt"
+
+docker tag jeffreybbrown/tax.co:new                      \
+  jeffreybbrown/tax.co:<PUT A BETTER NAME HERE>
+
+sudo docker run --name scala -it -v /home/jeff/scala:/mnt \
+  -p 8888:8888 -d -h 127.0.0.1                            \
+  hseeberger/scala-sbt:8u222_1.3.3_2.13.1
+
