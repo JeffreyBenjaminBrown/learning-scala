@@ -1,19 +1,23 @@
 * TODO resume here
-https://www.scala-exercises.org/scala_tutorial/structuring_information
+https://www.scala-exercises.org/scala_tutorial/syntactic_conveniences
 * How to clone some of these projects
 sbt new scala/hello-world.g8
 sbt new scala/scalatest-example.g8
 * some sbt commands
-sbt new <template>
-sbt compile # optional? can simply run without first compiling
-sbt ~run    # reruns after each change
-sbt run
-sbt test
+** sbt         # interactive mode, I guess
+*** from the project directory, run `sbt`
+*** from within sbt, run `~run`
+The ~ makes it rerun after each edit.
+** sbt console # a repl
+** sbt new <template>
+** sbt compile # optional? can simply run without first compiling
+** sbt ~run    # reruns after each change
+** sbt run
+** sbt test
 * Scala syntax
 ** function application
 *** operators are just symbol-named methods
  3 + 2 == 3.+(2)
-
 *** any method, not just symbol-named ones, can be used infix
  1.to(10) == 1 to 10
 ** definitions
@@ -61,7 +65,7 @@ and there care be more than one in a file, unlike Java
 **** like-packaged objects share
 if a statement like
   package foo
-appears at the top of two files, 
+appears at the top of two files,
 then their definitions are available to each other.
 **** fully qualified names require no import statements
 package quux
@@ -78,10 +82,74 @@ object Quux {
 All members of package scala
 All members of package java.lang
 All members of the singleton object scala.Predef.
+** types
+https://www.scala-exercises.org/scala_tutorial/structuring_information
+*** "case class": product types
+case class Note(
+  name: String,
+  duration: String,
+  octave: Int )
+*** "sealed trait": sum types
+sealed trait Symbol
+case class Note(name: String, duration: String, octave: Int) extends Symbol
+case class Rest(duration: String) extends Symbol
+*** "match-case": pattern matching
+def symbolDuration(symbol: Symbol): String =
+  symbol match {
+    case Note(name, duration, octave) => duration
+    case Rest(duration) => duration
+  }
+*** equals for case classes is defined automatically
+it compares their values
+*** enums are not case classes
+because they are not products. Example:
+sealed trait NoteName
+case object A extends NoteName
+case object B extends NoteName
+...
+case object G extends NoteName
+** higher-order functions
+def foo(f: Int => Int, a: Int, b: Int): Int
+** higher-kinded types
+They use brackets for type parameters,
+whereas values use parentheses. Example:
+
+res1: List[List[Int]] = List(List(0), List(1, 2))
+** lambda expressions
+(x: Int, y: Int) => x + y
+*** explicit return type is optional
+scala> ((x : Int) => (x*x : Int))(3)
+res5: Int = 9
+** standard types
+*** List
+**** values are written "List(elt,elt)"
+**** cons is written ::
+**** map, filter, etc. are method calls
+List(1, 2, 3).flatMap { x =>
+    List(x, 2 * x, 3 * x)
+  }
+**** "flatmap" is Haskell's concatmap
+*** Option = Haskell's Maybe
+Option T = None | Some T       -- Haskell-style
+also has map, filter, flatmap
+*** Try
+Throwable exception =>         -- Haskell-style
+  Try A = Success A | Failure exception
+*** Either
+** operators ending in (:)
+https://www.scala-exercises.org/scala_tutorial/standard_library
+*** are (by convention?) right-associative
+e.g. A :: B :: C is interpreted as A :: (B :: C).
+*** are method calls of the right-hand operand
+So you can write
+Nil.::(4).::(3).::(2).::(1)
 * tail-recursion
 ** to qualify, a function must
-call itself as the last thing it does -- and not, say, 
+call itself as the last thing it does -- and not, say,
 return the product of something with the call to itself
 ** a helpful example
 https://www.scala-exercises.org/scala_tutorial/tail_recursion
 at the bottom of the page they rewrite factorial to be tail-rec
+* importing Java libraries in Scala
+https://alvinalexander.com/scala/scala-import-java-classes-packages-examples
+of particular interest: aliases
