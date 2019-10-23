@@ -1,5 +1,6 @@
 * TODO resume here
-https://www.scala-exercises.org/scala_tutorial/syntactic_conveniences
+subsection "Abstract Classes"
+https://www.scala-exercises.org/scala_tutorial/object_oriented_programming
 * How to clone some of these projects
 sbt new scala/hello-world.g8
 sbt new scala/scalatest-example.g8
@@ -31,6 +32,8 @@ whereas "val" statements are evaluated once.
 "def" statements can also be used to define (static) values,
 but (I'm guessing) it's inefficient.
 ** evaluation
+*** identifiers can have wacky symbols
+x1 * +?%& vector_++ counter_=
 *** call-by-name ~ call-by-value ~~~ top-down ~ bottom-up
 *** Scala is "usually" call-by-value
 Which I think means strict.
@@ -82,6 +85,7 @@ object Quux {
 All members of package scala
 All members of package java.lang
 All members of the singleton object scala.Predef.
+*** types and values have separate namespaces
 ** types
 https://www.scala-exercises.org/scala_tutorial/structuring_information
 *** "case class": product types
@@ -143,6 +147,95 @@ e.g. A :: B :: C is interpreted as A :: (B :: C).
 *** are method calls of the right-hand operand
 So you can write
 Nil.::(4).::(3).::(2).::(1)
+** syntactic sugar
+*** string interpolation
+def greet(name: String): String =
+  s"Hello, $name!"
+def greet(name: String): String =
+  s"Hello, ${name.toUpperCase}!"
+*** tuple accessors
+(1,2)._1 = 1
+*** functions are objects with apply methods
+these two types are synonyms:
+  A => B
+  scala.Function1[A, B]
+Function2 has 2 args, etc.
+*** for expressions
+for (x <- xs; y <- ys) yield (x, y)
+for {
+  x <- xs if x % 2 == 0
+  y <- ys
+} yield (x, y)
+*** function calls can optionally make parameter names explicit
+and if you do, you can reorder them
+Range(start = 1, end = 10, step = 2)
+*** BEWARE: default values
+case class Range(start: Int, end: Int, step: Int = 1)
+*** BEWARE: "repeated parameters"
+You can define a function that can receive an arbitrary number of parameters (of the same type) as follows:
+def average(x: Int, xs: Int*): Double =
+  (x :: xs.to[List]).sum.toDouble / (xs.size + 1)
+And given such a function, a list can take the place of the many parameters:
+  val xs: List[Int] = …
+  average(1, xs: _*)
+*** type aliases
+Just like Haskell.
+type Result = Either[String, (Int, Int)]
+** OOP
+*** defining a class
+class Rational(x: Int, y: Int) {
+  def numer = x
+  def denom = y
+}
+=>
+A new type, named Rational.
+A constructor Rational to create elements of this type.
+*** creating an instance
+new Rational(3,2)
+*** TODO (seems useful): private members
+class Rational(x: Int, y: Int) {
+  private def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
+  private val g = gcd(x, y)
+  def numer = x / g
+  def denom = y / g
+  ...
+}
+*** "this" can usually be omitted
+When defining a member function of a class with field "x",
+one can simply write "x" instead of "this.x".
+But to refer to the entire object, one must use "this".
+*** imposing "require" on fields
+class Rational(x: Int, y: Int) {
+  require(y > 0, "denominator must be positive")
+  ...
+}
+failure throws an IllegalArgumentException
+*** BEWARE: auxiliary constructors
+class Rational(x: Int, y: Int) {
+  def this(x: Int) = this(x, 1)
+  ...
+}
+*** defining operators
+They are no different.
+  def + (r: Rational) =
+    new Rational(
+      numer * r.denom + r.numer * denom,
+      denom * r.denom
+    )
+*** precedence: determined by the first letter
+(all letters)
+|
+^
+&
+< >
+= !
+:
++ -
+* / %
+(all other special characters)
+** assertions
+Just like Python.
+  assert(x >= 0)
 * tail-recursion
 ** to qualify, a function must
 call itself as the last thing it does -- and not, say,
