@@ -1,6 +1,7 @@
 * TODO resume here
-subsection "Abstract Classes"
-https://www.scala-exercises.org/scala_tutorial/object_oriented_programming
+https://www.scala-exercises.org/scala_tutorial/imperative_programming
+** and when that's done, look over this
+https://docs.scala-lang.org/tour/tour-of-scala.html
 * How to clone some of these projects
 sbt new scala/hello-world.g8
 sbt new scala/scalatest-example.g8
@@ -231,8 +232,50 @@ They are no different.
 = !
 :
 + -
-* / %
+/ * %
 (all other special characters)
+*** abstract class
+One defined method of an abstract class can refer to an undefined one, relying on the extending subclass to define it.
+**** some terms
+Classes that "extend" an abstract class "conform" to its type.
+The direct or indirect superclasses of a class C are called base classes of C.
+**** syntax
+abstract class IntSet {
+  def incl(x: Int): IntSet
+  def contains(x: Int): Boolean
+}
+class Empty extends IntSet {
+  def contains(x: Int): Boolean = false
+  def incl(x: Int): IntSet =
+    new NonEmpty(x, new Empty, new Empty)
+}
+**** overriding a def from a superclass
+class Sub extends Base {
+  override def foo = 2
+  def bar = 3
+}
+**** for singleton types, define an object, not a class
+object Empty extends IntSet {
+  def contains(x: Int): Boolean = false
+  def incl(x: Int): IntSet = new NonEmpty(x, Empty, Empty)
+}
+*** multiple inheritance: use traits, not classes
+Example:
+  class Square extends Shape with Planar with Movable …
+Shape is a class. There can be only one.
+But Planar and Movable are traits.
+Unlike classes, traits cannot have (value) parameters.
+*** BEWARE: degenerate types
+**** top types
+Any is literally top.
+AnyRef and AnyVal are almost top.
+**** bottom types
+Scala's Nothing
+  ~ Haskell's bottom
+  Member of everything.
+  Uninhabited.
+Scala's Null
+  "Null is a subtype of every class that inherits from Object; it is incompatible with subtypes of AnyVal."
 ** assertions
 Just like Python.
   assert(x >= 0)
