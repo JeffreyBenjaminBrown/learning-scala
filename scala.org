@@ -1,7 +1,15 @@
 * TODO resume here
-https://www.scala-exercises.org/scala_tutorial/imperative_programming
-** and when that's done, look over this
-https://docs.scala-lang.org/tour/tour-of-scala.html
+** in the tour & of interest
+*** currying
+https://docs.scala-lang.org/tour/multiple-parameter-lists.html
+*** annotations
+https://docs.scala-lang.org/tour/annotations.html
+*** packages, imports, package objects
+https://docs.scala-lang.org/tour/packages-and-imports.html
+https://docs.scala-lang.org/tour/package-objects.html
+** after that
+https://docs.scala-lang.org/overviews/index.html
+https://docs.scala-lang.org/tutorials/FAQ/index.html
 * How to clone some of these projects
 sbt new scala/hello-world.g8
 sbt new scala/scalatest-example.g8
@@ -16,7 +24,8 @@ The ~ makes it rerun after each edit.
 ** sbt ~run    # reruns after each change
 ** sbt run
 ** sbt test
-* Scala syntax
+* the scala tutorial
+https://www.scala-exercises.org/scala_tutorial/terms_and_types
 ** function application
 *** operators are just symbol-named methods
  3 + 2 == 3.+(2)
@@ -128,7 +137,7 @@ res5: Int = 9
 ** standard types
 *** List
 **** values are written "List(elt,elt)"
-**** cons is written ::
+**** (::) is cons
 **** map, filter, etc. are method calls
 List(1, 2, 3).flatMap { x =>
     List(x, 2 * x, 3 * x)
@@ -279,6 +288,98 @@ Scala's Null
 ** assertions
 Just like Python.
   assert(x >= 0)
+** imperative | state
+*** "var": like "val" but for stateful variables
+Once a var is declared, it can be changed (without a keyword):
+  var x = 3
+  x = x+1
+*** a val can have var fields
+=> vals are not necessarily immutable
+*** while loops
+are stateful -- they require something to update
+def power(x: Double, exp: Int): Double = {
+  var r = 1.0
+  var i = exp
+  while (i > 0) { r = r * x; i = i - 1 }
+  r
+}
+*** BEWARE: for loops != for expressions
+("for expressions" are described above.)
+**** what it does
+def foreach(f: A => Unit): Unit =
+  // apply `f` to each element of the collection
+**** example
+  (1 until 3) foreach (i => "abc" foreach (j => println(s"$i $j")))
+is equivalent to
+  for (i <- 1 until 3; j <- "abc") println(s"$i $j")
+** classes v. case classes
+Case classes are immutable,
+so equality is element equality.
+In (all?) other cases Scala uses referential equality.
+
+"creating a class instance requires the keyword new,
+whereas this is not required for case classes."
+
+"the case class constructor parameters are promoted to members,
+whereas this is not the case with regular classes."
+
+Pattern matching is for case classes,
+and generally not for classes.
+
+Case classes cannot extend classes.
+
+Case classes are special cases of classes,
+in which Scala generates some code automatically.
+See bottom of
+https://www.scala-exercises.org/scala_tutorial/classes_vs_case_classes
+** polymorphic types
+*** type parameters
+abstract class Set[A] {
+  def incl(a: A): Set[A]
+  def contains(a: A): Boolean
+}
+class Empty[A] extends Set[A] {
+  …
+}
+class NonEmpty[A](elem: A, left: Set[A], right: Set[A]) extends Set[A] {
+  …
+}
+*** generic functions
+  def singleton[A](elem: A) =
+    new NonEmpty[A](elem, new Empty[A], new Empty[A])
+Now we can call it:
+  singleton[Int](1)
+  singleton[Boolean](true)
+*** type parameters are usually inferrable, so optional
+*** upper and lower bounds
+def selection[A <: Animal](a1: A, a2: A): A =
+  if (a1.fitness > a2.fitness) a1 else a2
+can also write
+  A >: Reptile
+  A >: Zebra <: Animal // between Zebra and Animal
+*** subtyping, variance, and covariance: hard
+Given `Zebra <: Mammal`, is `Field[Zebra] <: Field[Mammal]`?
+
+This seems only apply to classes (not case classes),
+and I don't really want to use them, so I'll skip it.
+** laziness
+*** Stream | LazyList
+The tutorial talked about Stream, maybe because it's old.
+val xs = Stream.cons(1, Stream.cons(2, Stream.empty))
+x #:: xs == Stream.cons(x, xs)
+*** "lazy val" keyword
+lazy val x = expr
+** type classes
+*** example
+def insertionSort[T]             // polymorphic in T
+    (xs: List[T])                // the argument
+    (implicit ord: Ordering[T]): // the constraint
+    List[T] = {                  // return type
+  def insert(y: T, ys: List[T]): List[T] =
+    … if (ord.lt(y, z)) …        // using the constraint
+  … insert(y, insertionSort(ys)) …
+}
+*** if there's more than one possible implicit def, error
 * tail-recursion
 ** to qualify, a function must
 call itself as the last thing it does -- and not, say,
