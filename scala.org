@@ -1,6 +1,6 @@
 * TODO
 ** curriculum
-*** Hello World for data
+*** Hello CSV
 load csv
 add a random column
   =>? integrate with Breeze
@@ -8,7 +8,18 @@ save csv
 *** Makefile
 **** separate compilation from execution
 how to build an executable
+**** test some data
+**** ingest parameters to Scala from command line
 **** integrate with Python code
+*** across libraries
+test if column elts in set
+create set from column
+apply map to column
+create map[a,Set b] from two columns
+regex in a dataframe
+  find matches
+  substitute
+test a function
 *** in Saddle
 **** common & probably easy
 save, load csv
@@ -22,7 +33,9 @@ reorder columns, rows
 select row, column subset by predicate
   test for null
 sort
-apply regex substitution to column
+unique
+shape
+transpose
 **** common
 groupby multiple columns
   apply different agg ops to different columns
@@ -32,6 +45,10 @@ apply lambda
 pivot table
 compute percentiles
 join -- inner, outer, left
+lag, lead, diff
+drop duplicates
+**** uncommon
+combine_first
 ** resume reading here
 *** in the tour & of interest
 **** currying
