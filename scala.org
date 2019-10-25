@@ -1,15 +1,94 @@
-* TODO resume here
-** in the tour & of interest
-*** currying
-https://docs.scala-lang.org/tour/multiple-parameter-lists.html
-*** annotations
-https://docs.scala-lang.org/tour/annotations.html
-*** packages, imports, package objects
-https://docs.scala-lang.org/tour/packages-and-imports.html
-https://docs.scala-lang.org/tour/package-objects.html
-** after that
-https://docs.scala-lang.org/overviews/index.html
-https://docs.scala-lang.org/tutorials/FAQ/index.html
+* TODO
+** curriculum
+groupby multiple columns
+after groupby, apply different agg ops to different columns
+save, load csv
+  with an Option[Int] column
+  with an explicit assignment of types to columns
+describe
+select row subset
+rename columns, rows
+apply regex substitution to column
+change a column's type
+sort
+** configure libs & plugins
+*** TODO try building Saddle in Scala 2.(13,12)
+curl https://raw.github.com/paulp/sbt-extras/master/sbt > ~/bin/sbt
+*** TODO ask if WR doesn't work for Scala 2.11
+When I use Scala 2.11.5,
+I can use null, define a list of mixed types, etc.
+*** TODO ask if anyone uses them all
+"Compiler plugins incompatible with Breeze, Saddle?"
+I had to hunt around a lot to find a configuration that
+would let me start a console with Breeze, Saddle and WartRemover.
+To do that I set scalaVersion to 2.10.4
+and WartRemover to 2.3.7. But WartRemover appears not to be working:
+both from the repl and from .scala files,
+I can define things like `val s: String = null`
+or `val xs = List(1, true, "booze")`.
+*** sbt configurations that work
+**** Scala 2.13.1: no Saddle
+Breeze and Breeze-Viz 1.0
+wartRemover 2.4.3
+sbt-tpolecat 0.1.8
+**** Scala 2.12: no Saddle
+http://oss.sonatype.org/content/repositories/releases/org/scala-saddle
+**** Scala 2.11: no sbt-tpolecat, and WR does nothing
+https://dl.bintray.com/sbt/sbt-plugin-releases/io.github.davidgregory084/sbt-tpolecat/
+Saddle 1.3.4
+wartRemover 2.4.2
+*** repos and availability
+**** sbt-tpolecat
+https://dl.bintray.com/sbt/sbt-plugin-releases/io.github.davidgregory084/sbt-tpolecat/
+Scala 2.10 or 2.12
+**** wartRemover
+http://www.wartremover.org/
+  says it is tested against Scala 2.10, 2.11 and 2.12
+https://repo1.maven.org/maven2/org/wartremover/
+  Latest versions
+    of "wartRemover"
+      Scala 2.10    -> 2.3.7
+      Scala 2.11    -> 2.4.2
+      Scala 2.13.1  -> 2.4.3
+    of "sbt-wartRemover"
+      Scala 2.10    -> 2.3.7
+      Scala 2.12    -> 2.4.3
+**** DONE Breeze: Available for everything
+**** Saddle: Scala 2.9 through 2.11
+  "org.scala-saddle" %% "saddle-core" % "1.3.+",
+    // https://repo1.maven.org/maven2/org/scala-saddle/saddle-core_2.12/maven-metadata.xml
+    // only available for Scala 2.9 through 2.11
+*** sbtix: NixOS + SBT
+** resume here
+*** in the tour & of interest
+**** currying
+ https://docs.scala-lang.org/tour/multiple-parameter-lists.html
+**** annotations
+ https://docs.scala-lang.org/tour/annotations.html
+**** packages, imports, package objects
+ https://docs.scala-lang.org/tour/packages-and-imports.html
+ https://docs.scala-lang.org/tour/package-objects.html
+*** after that
+ https://docs.scala-lang.org/overviews/index.html
+ https://docs.scala-lang.org/tutorials/FAQ/index.html
+** data science libraries
+*** Saddle (~pandas?)
+*** Breeze (~scipy?)
+*** ScalaLab (~Matlab, supposedly)
+** optimize by enabling native code
+search for "native code" here
+  https://github.com/scalanlp/breeze/wiki/Installation
+** report errata
+*** https://github.com/scalanlp/breeze/wiki/Installation
+at the top appears this:
+  set scalaVersion := "2.10.4" // or 2.11.5
+but twice elsewhere, 2.11.8 is suggested
+*** https://saddle.github.io/doc/index.html#download-and-install
+worth saying what values work for scalaVersion
+  2.10.4, 2.11.5, maybe others
+*** https://saddle.github.io/doc/quickstart.html
+"a thousand random positive ints, from 1 to 9"
+should say "0 to 9"
 * How to clone some of these projects
 sbt new scala/hello-world.g8
 sbt new scala/scalatest-example.g8
@@ -380,6 +459,20 @@ def insertionSort[T]             // polymorphic in T
   … insert(y, insertionSort(ys)) …
 }
 *** if there's more than one possible implicit def, error
+* Saddle
+** PITFALL: indices can be redundant
+scala> Series(Vec(1,2,3,4), Index("c", "b", "a", "b"))
+res12: org.saddle.Series[java.lang.String,Int] =
+[4 x 1]
+c -> 1
+b -> 2
+a -> 3
+b -> 4 // another b
+** PITFALL: slices ignore absent keys
+scala> q("a", "d") // q had no entry labeled d
+res5: org.saddle.Series[java.lang.String,Int] =
+[1 x 1]
+a -> 2
 * tail-recursion
 ** to qualify, a function must
 call itself as the last thing it does -- and not, say,
