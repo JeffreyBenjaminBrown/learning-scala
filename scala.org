@@ -1,17 +1,37 @@
 * TODO
 ** curriculum
-groupby multiple columns
-after groupby, apply different agg ops to different columns
+*** Hello World for data
+load csv
+add a random column
+  =>? integrate with Breeze
+save csv
+*** Makefile
+**** separate compilation from execution
+how to build an executable
+**** integrate with Python code
+*** in Saddle
+**** common & probably easy
 save, load csv
-  with an Option[Int] column
   with an explicit assignment of types to columns
+  with an Option[Int] column
+  with a custom data type
 describe
-select row subset
-rename columns, rows
-apply regex substitution to column
 change a column's type
+rename columns, rows
+reorder columns, rows
+select row, column subset by predicate
+  test for null
 sort
-** configure libs & plugins
+apply regex substitution to column
+**** common
+groupby multiple columns
+  apply different agg ops to different columns
+apply lambda
+  to whole rows or columns
+  to groups
+pivot table
+compute percentiles
+join -- inner, outer, left
 ** resume reading here
 *** in the tour & of interest
 **** currying
