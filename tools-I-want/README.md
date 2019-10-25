@@ -1,4 +1,4 @@
-My attempt at using all of the following:
+A configuration that lets me use all of the following:
 
 * ScalaTest (library)
 * Breeze (library)
