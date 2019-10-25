@@ -12,62 +12,6 @@ apply regex substitution to column
 change a column's type
 sort
 ** configure libs & plugins
-*** TODO awaiting response
-**** does WR work for Scala 2.11
-https://github.com/wartremover/wartremover/issues/460
-It loads without complaint,
-but I can evaluate things I'm not supposed to,
-like null or a mixed-type list.
-**** how to use Saddle for Scala 2.12
-https://github.com/saddle/saddle/issues/84#issuecomment-546505589
-There's a Maven repo for it, using a fork of Saddle;
-I just need to know how to add a resolver for it.
-*** TODO ask if anyone uses them all
-"Compiler plugins incompatible with Breeze, Saddle?"
-I had to hunt around a lot to find a configuration that
-would let me start a console with Breeze, Saddle and WartRemover.
-To do that I set scalaVersion to 2.10.4
-and WartRemover to 2.3.7. But WartRemover appears not to be working:
-both from the repl and from .scala files,
-I can define things like `val s: String = null`
-or `val xs = List(1, true, "booze")`.
-*** sbt configurations that work
-**** Scala 2.13.1: no Saddle
-Breeze and Breeze-Viz 1.0
-wartRemover 2.4.3
-sbt-tpolecat 0.1.8
-**** Scala 2.12: no Saddle
-http://oss.sonatype.org/content/repositories/releases/org/scala-saddle
-Could use WR 2.4.{2,3}
-***** sbt-tpolecat: Will I have a problem with sbt > 1.0?
-https://dl.bintray.com/sbt/sbt-plugin-releases/io.github.davidgregory084/sbt-tpolecat/
-I'm using sbt 1.3.3
-**** Scala 2.11: no sbt-tpolecat, and WR does nothing
-https://dl.bintray.com/sbt/sbt-plugin-releases/io.github.davidgregory084/sbt-tpolecat/
-Saddle 1.3.4
-wartRemover 2.4.2
-*** repos and availability
-**** sbt-tpolecat
-https://dl.bintray.com/sbt/sbt-plugin-releases/io.github.davidgregory084/sbt-tpolecat/
-Scala 2.10 or 2.12
-**** wartRemover
-http://www.wartremover.org/
-  says it is tested against Scala 2.10, 2.11 and 2.12
-https://repo1.maven.org/maven2/org/wartremover/
-  Latest versions
-    of "wartRemover"
-      Scala 2.10    -> 2.3.7
-      Scala 2.11    -> 2.4.2
-      Scala 2.13.1  -> 2.4.3
-    of "sbt-wartRemover"
-      Scala 2.10    -> 2.3.7
-      Scala 2.12    -> 2.4.3
-**** DONE Breeze: Available for everything
-**** Saddle: Scala 2.9 through 2.11
-  "org.scala-saddle" %% "saddle-core" % "1.3.+",
-    // https://repo1.maven.org/maven2/org/scala-saddle/
-    // only available for Scala 2.9 through 2.11
-*** sbtix: NixOS + SBT
 ** resume reading here
 *** in the tour & of interest
 **** currying
@@ -98,6 +42,8 @@ worth saying what values work for scalaVersion
 *** https://saddle.github.io/doc/quickstart.html
 "a thousand random positive ints, from 1 to 9"
 should say "0 to 9"
+* TODO maybe
+** sbtix: NixOS + SBT
 * How to clone some of these projects
 sbt new scala/hello-world.g8
 sbt new scala/scalatest-example.g8
