@@ -12,11 +12,16 @@ apply regex substitution to column
 change a column's type
 sort
 ** configure libs & plugins
-*** TODO try building Saddle in Scala 2.(13,12)
-curl https://raw.github.com/paulp/sbt-extras/master/sbt > ~/bin/sbt
-*** TODO ask if WR doesn't work for Scala 2.11
-When I use Scala 2.11.5,
-I can use null, define a list of mixed types, etc.
+*** TODO awaiting response
+**** does WR work for Scala 2.11
+https://github.com/wartremover/wartremover/issues/460
+It loads without complaint,
+but I can evaluate things I'm not supposed to,
+like null or a mixed-type list.
+**** how to use Saddle for Scala 2.12
+https://github.com/saddle/saddle/issues/84#issuecomment-546505589
+There's a Maven repo for it, using a fork of Saddle;
+I just need to know how to add a resolver for it.
 *** TODO ask if anyone uses them all
 "Compiler plugins incompatible with Breeze, Saddle?"
 I had to hunt around a lot to find a configuration that
@@ -33,6 +38,10 @@ wartRemover 2.4.3
 sbt-tpolecat 0.1.8
 **** Scala 2.12: no Saddle
 http://oss.sonatype.org/content/repositories/releases/org/scala-saddle
+Could use WR 2.4.{2,3}
+***** sbt-tpolecat: Will I have a problem with sbt > 1.0?
+https://dl.bintray.com/sbt/sbt-plugin-releases/io.github.davidgregory084/sbt-tpolecat/
+I'm using sbt 1.3.3
 **** Scala 2.11: no sbt-tpolecat, and WR does nothing
 https://dl.bintray.com/sbt/sbt-plugin-releases/io.github.davidgregory084/sbt-tpolecat/
 Saddle 1.3.4
@@ -56,10 +65,10 @@ https://repo1.maven.org/maven2/org/wartremover/
 **** DONE Breeze: Available for everything
 **** Saddle: Scala 2.9 through 2.11
   "org.scala-saddle" %% "saddle-core" % "1.3.+",
-    // https://repo1.maven.org/maven2/org/scala-saddle/saddle-core_2.12/maven-metadata.xml
+    // https://repo1.maven.org/maven2/org/scala-saddle/
     // only available for Scala 2.9 through 2.11
 *** sbtix: NixOS + SBT
-** resume here
+** resume reading here
 *** in the tour & of interest
 **** currying
  https://docs.scala-lang.org/tour/multiple-parameter-lists.html
@@ -483,3 +492,9 @@ at the bottom of the page they rewrite factorial to be tail-rec
 * importing Java libraries in Scala
 https://alvinalexander.com/scala/scala-import-java-classes-packages-examples
 of particular interest: aliases
+* PITFALLS
+** unreachable variables defined in Main are uninitialized
+if I put this in Main
+  val wado2 = 3
+and then evaluate it in the REPL, I get 0.
+But if I put it in some other class, I get 3.
