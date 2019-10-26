@@ -1,5 +1,16 @@
 * TODO
 ** curriculum
+*** DONE from bash, run a specific file, with arguments
+Suppose the file is `src/main/scala/Main3.scala`.
+It should look like this:
+  object Main3 {
+    def main(args: Array[String]): Unit = {
+      println(args.mkString(", "))
+    }
+  }
+The `args` argument in the signature is critical.
+From sbt, run `run-main src.main.scala.Main3`.
+From the command line, run `sbt run-main src.main.scala.Main3`
 *** Hello CSV
 load csv
 add a random column
