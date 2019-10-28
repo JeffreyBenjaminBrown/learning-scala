@@ -1,4 +1,8 @@
 * TODO
+** make a function that manipulates values in a mixed-type Frame
+e.g. the frame has strings and numbers,
+and the function adds one to each number.
+If this is impossible, I am sunk.
 ** curriculum
 *** DONE from bash, run a specific file, with arguments
 Suppose the file is `src/main/scala/Main3.scala`.
@@ -11,13 +15,20 @@ It should look like this:
 The `args` argument in the signature is critical.
 From sbt, run `run-main src.main.scala.Main3`.
 From the command line, run `sbt run-main src.main.scala.Main3`
+*** DONE run a specific test
+sbt "testOnly <path>"
+**** MAYBE DO ? command line arguments for tests
+This might be the answer:
+https://stackoverflow.com/questions/35433177/passing-additional-arguments-to-tests-with-scalatest/35454165
+I didn't figure out how to run it, assuming it works.
+I didn't spend a ton of time on it, though.
 *** Hello CSV
 load csv
 add a random column
   =>? integrate with Breeze
 save csv
 *** Makefile
-**** separate compilation from execution
+**** MAYBE DO ? separate compilation from execution
 how to build an executable
 **** test some data
 **** ingest parameters to Scala from command line
@@ -106,362 +117,415 @@ The ~ makes it rerun after each edit.
 ** sbt ~run    # reruns after each change
 ** sbt run
 ** sbt test
-* the scala tutorial
-https://www.scala-exercises.org/scala_tutorial/terms_and_types
-** function application
-*** operators are just symbol-named methods
- 3 + 2 == 3.+(2)
-*** any method, not just symbol-named ones, can be used infix
- 1.to(10) == 1 to 10
-** definitions
-*** of non-function values
- val x = 3
-*** of functions
-Return type is optional.
-def power(x: Double, y: Int): Double = ...
-*** "def statements" are reevaluated at each call
-whereas "val" statements are evaluated once.
-"def" statements can also be used to define (static) values,
-but (I'm guessing) it's inefficient.
-** evaluation
-*** identifiers can have wacky symbols
-x1 * +?%& vector_++ counter_=
-*** call-by-name ~ call-by-value ~~~ top-down ~ bottom-up
-*** Scala is "usually" call-by-value
-Which I think means strict.
-But they mention call-by-name (lazy?) as if it is possible:
-https://www.scala-exercises.org/scala_tutorial/definitions_and_evaluation
+* Scala
+** the scala tutorial
+ https://www.scala-exercises.org/scala_tutorial/terms_and_types
+*** function application
+**** operators are just symbol-named methods
+  3 + 2 == 3.+(2)
+**** any method, not just symbol-named ones, can be used infix
+  1.to(10) == 1 to 10
+*** definitions
+**** of non-function values
+  val x = 3
+**** of functions
+ Return type is optional.
+ def power(x: Double, y: Int): Double = ...
+**** "def statements" are reevaluated at each call
+ whereas "val" statements are evaluated once.
+ "def" statements can also be used to define (static) values,
+ but (I'm guessing) it's inefficient.
+*** evaluation
+**** identifiers can have wacky symbols
+ x1 * +?%& vector_++ counter_=
+**** call-by-name ~ call-by-value ~~~ top-down ~ bottom-up
+**** Scala is "usually" call-by-value
+ Which I think means strict.
+ But they mention call-by-name (lazy?) as if it is possible:
+ https://www.scala-exercises.org/scala_tutorial/definitions_and_evaluation
 
-** scope
-*** the last elt in a {}-block is its value
-*** definitions in a block
-are accessible only inisde it
-shadow outside names
-*** functions can use blocks to define private subfunctions
-def sqrt(x: Double) = {
-  def sqrtIter(guess: Double): Double =
-    if (isGoodEnough(guess, x)) guess
-    else sqrtIter(improve(guess, x), x)
+*** scope
+**** the last elt in a {}-block is its value
+**** definitions in a block
+ are accessible only inisde it
+ shadow outside names
+**** functions can use blocks to define private subfunctions
+ def sqrt(x: Double) = {
+   def sqrtIter(guess: Double): Double =
+     if (isGoodEnough(guess, x)) guess
+     else sqrtIter(improve(guess, x), x)
 
-  def improve(guess: Double) =
-    (guess + x / guess) / 2
+   def improve(guess: Double) =
+     (guess + x / guess) / 2
 
-  def isGoodEnough(guess: Double) =
-    abs(square(guess) - x) < 0.001
+   def isGoodEnough(guess: Double) =
+     abs(square(guess) - x) < 0.001
 
-  sqrtIter(1.0)
-}
-*** semicolons can separate statements on the same line
-*** use parens to write multi-line expressions
-or put the operator at the end of the first line
-*** the top-level objects of a file are "objects"
-and there care be more than one in a file, unlike Java
-*** packages
-**** like-packaged objects share
-if a statement like
-  package foo
-appears at the top of two files,
-then their definitions are available to each other.
-**** fully qualified names require no import statements
-package quux
-object Quux {
-  foo.Bar.someMethod // foo is the package name
-}
-**** import statements let you omit most of a name
-package quux
-import foo.Bar
-object Quux {
-  Bar.someMethod
-}
-*** automatic imports
-All members of package scala
-All members of package java.lang
-All members of the singleton object scala.Predef.
-*** types and values have separate namespaces
-** types
-https://www.scala-exercises.org/scala_tutorial/structuring_information
-*** "case class": product types
-case class Note(
-  name: String,
-  duration: String,
-  octave: Int )
-*** "sealed trait": sum types
-sealed trait Symbol
-case class Note(name: String, duration: String, octave: Int) extends Symbol
-case class Rest(duration: String) extends Symbol
-*** "match-case": pattern matching
-def symbolDuration(symbol: Symbol): String =
-  symbol match {
-    case Note(name, duration, octave) => duration
-    case Rest(duration) => duration
-  }
-*** equals for case classes is defined automatically
-it compares their values
-*** enums are not case classes
-because they are not products. Example:
-sealed trait NoteName
-case object A extends NoteName
-case object B extends NoteName
-...
-case object G extends NoteName
-** higher-order functions
-def foo(f: Int => Int, a: Int, b: Int): Int
-** higher-kinded types
-They use brackets for type parameters,
-whereas values use parentheses. Example:
+   sqrtIter(1.0)
+ }
+**** semicolons can separate statements on the same line
+**** use parens to write multi-line expressions
+ or put the operator at the end of the first line
+**** the top-level objects of a file are "objects"
+ and there care be more than one in a file, unlike Java
+**** packages
+***** like-packaged objects share
+ if a statement like
+   package foo
+ appears at the top of two files,
+ then their definitions are available to each other.
+***** fully qualified names require no import statements
+ package quux
+ object Quux {
+   foo.Bar.someMethod // foo is the package name
+ }
+***** import statements let you omit most of a name
+ package quux
+ import foo.Bar
+ object Quux {
+   Bar.someMethod
+ }
+**** automatic imports
+ All members of package scala
+ All members of package java.lang
+ All members of the singleton object scala.Predef.
+**** types and values have separate namespaces
+*** types
+ https://www.scala-exercises.org/scala_tutorial/structuring_information
+**** "case class": product types
+ case class Note(
+   name: String,
+   duration: String,
+   octave: Int )
+**** "sealed trait": sum types
+ sealed trait Symbol
+ case class Note(name: String, duration: String, octave: Int) extends Symbol
+ case class Rest(duration: String) extends Symbol
+**** "match-case": pattern matching
+ def symbolDuration(symbol: Symbol): String =
+   symbol match {
+     case Note(name, duration, octave) => duration
+     case Rest(duration) => duration
+   }
+**** equals for case classes is defined automatically
+ it compares their values
+**** enums are not case classes
+ because they are not products. Example:
+ sealed trait NoteName
+ case object A extends NoteName
+ case object B extends NoteName
+ ...
+ case object G extends NoteName
+*** higher-order functions
+ def foo(f: Int => Int, a: Int, b: Int): Int
+*** higher-kinded types
+ They use brackets for type parameters,
+ whereas values use parentheses. Example:
 
-res1: List[List[Int]] = List(List(0), List(1, 2))
-** lambda expressions
-(x: Int, y: Int) => x + y
-*** explicit return type is optional
-scala> ((x : Int) => (x*x : Int))(3)
-res5: Int = 9
-** standard types
-*** List
-**** values are written "List(elt,elt)"
-**** (::) is cons
-**** map, filter, etc. are method calls
-List(1, 2, 3).flatMap { x =>
-    List(x, 2 * x, 3 * x)
-  }
-**** "flatmap" is Haskell's concatmap
-*** Option = Haskell's Maybe
-Option T = None | Some T       -- Haskell-style
-also has map, filter, flatmap
-*** Try
-Throwable exception =>         -- Haskell-style
-  Try A = Success A | Failure exception
-*** Either
-** operators ending in (:)
-https://www.scala-exercises.org/scala_tutorial/standard_library
-*** are (by convention?) right-associative
-e.g. A :: B :: C is interpreted as A :: (B :: C).
-*** are method calls of the right-hand operand
-So you can write
-Nil.::(4).::(3).::(2).::(1)
-** syntactic sugar
-*** string interpolation
-def greet(name: String): String =
-  s"Hello, $name!"
-def greet(name: String): String =
-  s"Hello, ${name.toUpperCase}!"
-*** tuple accessors
-(1,2)._1 = 1
-*** functions are objects with apply methods
-these two types are synonyms:
-  A => B
-  scala.Function1[A, B]
-Function2 has 2 args, etc.
-*** for expressions
-for (x <- xs; y <- ys) yield (x, y)
-for {
-  x <- xs if x % 2 == 0
-  y <- ys
-} yield (x, y)
-*** function calls can optionally make parameter names explicit
-and if you do, you can reorder them
-Range(start = 1, end = 10, step = 2)
-*** BEWARE: default values
-case class Range(start: Int, end: Int, step: Int = 1)
-*** BEWARE: "repeated parameters"
-You can define a function that can receive an arbitrary number of parameters (of the same type) as follows:
-def average(x: Int, xs: Int*): Double =
-  (x :: xs.to[List]).sum.toDouble / (xs.size + 1)
-And given such a function, a list can take the place of the many parameters:
-  val xs: List[Int] = …
-  average(1, xs: _*)
-*** type aliases
-Just like Haskell.
-type Result = Either[String, (Int, Int)]
-** OOP
-*** defining a class
-class Rational(x: Int, y: Int) {
-  def numer = x
-  def denom = y
-}
-=>
-A new type, named Rational.
-A constructor Rational to create elements of this type.
-*** creating an instance
-new Rational(3,2)
-*** TODO (seems useful): private members
-class Rational(x: Int, y: Int) {
-  private def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
-  private val g = gcd(x, y)
-  def numer = x / g
-  def denom = y / g
-  ...
-}
-*** "this" can usually be omitted
-When defining a member function of a class with field "x",
-one can simply write "x" instead of "this.x".
-But to refer to the entire object, one must use "this".
-*** imposing "require" on fields
-class Rational(x: Int, y: Int) {
-  require(y > 0, "denominator must be positive")
-  ...
-}
-failure throws an IllegalArgumentException
-*** BEWARE: auxiliary constructors
-class Rational(x: Int, y: Int) {
-  def this(x: Int) = this(x, 1)
-  ...
-}
-*** defining operators
-They are no different.
-  def + (r: Rational) =
-    new Rational(
-      numer * r.denom + r.numer * denom,
-      denom * r.denom
-    )
-*** precedence: determined by the first letter
-(all letters)
-|
-^
-&
-< >
-= !
-:
-+ -
-/ * %
-(all other special characters)
-*** abstract class
-One defined method of an abstract class can refer to an undefined one, relying on the extending subclass to define it.
-**** some terms
-Classes that "extend" an abstract class "conform" to its type.
-The direct or indirect superclasses of a class C are called base classes of C.
-**** syntax
-abstract class IntSet {
-  def incl(x: Int): IntSet
-  def contains(x: Int): Boolean
-}
-class Empty extends IntSet {
-  def contains(x: Int): Boolean = false
-  def incl(x: Int): IntSet =
-    new NonEmpty(x, new Empty, new Empty)
-}
-**** overriding a def from a superclass
-class Sub extends Base {
-  override def foo = 2
-  def bar = 3
-}
-**** for singleton types, define an object, not a class
-object Empty extends IntSet {
-  def contains(x: Int): Boolean = false
-  def incl(x: Int): IntSet = new NonEmpty(x, Empty, Empty)
-}
-*** multiple inheritance: use traits, not classes
-Example:
-  class Square extends Shape with Planar with Movable …
-Shape is a class. There can be only one.
-But Planar and Movable are traits.
-Unlike classes, traits cannot have (value) parameters.
-*** BEWARE: degenerate types
-**** top types
-Any is literally top.
-AnyRef and AnyVal are almost top.
-**** bottom types
-Scala's Nothing
-  ~ Haskell's bottom
-  Member of everything.
-  Uninhabited.
-Scala's Null
-  "Null is a subtype of every class that inherits from Object; it is incompatible with subtypes of AnyVal."
-** assertions
-Just like Python.
-  assert(x >= 0)
-** imperative | state
-*** "var": like "val" but for stateful variables
-Once a var is declared, it can be changed (without a keyword):
-  var x = 3
-  x = x+1
-*** a val can have var fields
-=> vals are not necessarily immutable
-*** while loops
-are stateful -- they require something to update
-def power(x: Double, exp: Int): Double = {
-  var r = 1.0
-  var i = exp
-  while (i > 0) { r = r * x; i = i - 1 }
-  r
-}
-*** BEWARE: for loops != for expressions
-("for expressions" are described above.)
-**** what it does
-def foreach(f: A => Unit): Unit =
-  // apply `f` to each element of the collection
+ res1: List[List[Int]] = List(List(0), List(1, 2))
+*** lambda expressions
+ (x: Int, y: Int) => x + y
+**** explicit return type is optional
+ scala> ((x : Int) => (x*x : Int))(3)
+ res5: Int = 9
+*** standard types
+**** List
+***** values are written "List(elt,elt)"
+***** (::) is cons
+***** map, filter, etc. are method calls
+ List(1, 2, 3).flatMap { x =>
+     List(x, 2 * x, 3 * x)
+   }
+***** "flatmap" is Haskell's concatmap
+**** Option = Haskell's Maybe
+ Option T = None | Some T       -- Haskell-style
+ also has map, filter, flatmap
+**** Try
+ Throwable exception =>         -- Haskell-style
+   Try A = Success A | Failure exception
+**** Either
+*** operators ending in (:)
+ https://www.scala-exercises.org/scala_tutorial/standard_library
+**** are (by convention?) right-associative
+ e.g. A :: B :: C is interpreted as A :: (B :: C).
+**** are method calls of the right-hand operand
+ So you can write
+ Nil.::(4).::(3).::(2).::(1)
+*** syntactic sugar
+**** string interpolation
+ def greet(name: String): String =
+   s"Hello, $name!"
+ def greet(name: String): String =
+   s"Hello, ${name.toUpperCase}!"
+**** tuple accessors
+ (1,2)._1 = 1
+**** functions are objects with apply methods
+ these two types are synonyms:
+   A => B
+   scala.Function1[A, B]
+ Function2 has 2 args, etc.
+**** for expressions
+ for (x <- xs; y <- ys) yield (x, y)
+ for {
+   x <- xs if x % 2 == 0
+   y <- ys
+ } yield (x, y)
+**** function calls can optionally make parameter names explicit
+ and if you do, you can reorder them
+ Range(start = 1, end = 10, step = 2)
+**** BEWARE: default values
+ case class Range(start: Int, end: Int, step: Int = 1)
+**** BEWARE: "repeated parameters"
+ You can define a function that can receive an arbitrary number of parameters (of the same type) as follows:
+ def average(x: Int, xs: Int*): Double =
+   (x :: xs.to[List]).sum.toDouble / (xs.size + 1)
+ And given such a function, a list can take the place of the many parameters:
+   val xs: List[Int] = …
+   average(1, xs: _*)
+**** type aliases
+ Just like Haskell.
+ type Result = Either[String, (Int, Int)]
+*** OOP
+**** defining a class
+ class Rational(x: Int, y: Int) {
+   def numer = x
+   def denom = y
+ }
+ =>
+ A new type, named Rational.
+ A constructor Rational to create elements of this type.
+**** creating an instance
+ new Rational(3,2)
+**** TODO (seems useful): private members
+ class Rational(x: Int, y: Int) {
+   private def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
+   private val g = gcd(x, y)
+   def numer = x / g
+   def denom = y / g
+   ...
+ }
+**** "this" can usually be omitted
+ When defining a member function of a class with field "x",
+ one can simply write "x" instead of "this.x".
+ But to refer to the entire object, one must use "this".
+**** imposing "require" on fields
+ class Rational(x: Int, y: Int) {
+   require(y > 0, "denominator must be positive")
+   ...
+ }
+ failure throws an IllegalArgumentException
+**** BEWARE: auxiliary constructors
+ class Rational(x: Int, y: Int) {
+   def this(x: Int) = this(x, 1)
+   ...
+ }
+**** defining operators
+ They are no different.
+   def + (r: Rational) =
+     new Rational(
+       numer * r.denom + r.numer * denom,
+       denom * r.denom
+     )
+**** precedence: determined by the first letter
+ (all letters)
+ |
+ ^
+ &
+ < >
+ = !
+ :
+ + -
+ / * %
+ (all other special characters)
+**** abstract class
+ One defined method of an abstract class can refer to an undefined one, relying on the extending subclass to define it.
+***** some terms
+ Classes that "extend" an abstract class "conform" to its type.
+ The direct or indirect superclasses of a class C are called base classes of C.
+***** syntax
+ abstract class IntSet {
+   def incl(x: Int): IntSet
+   def contains(x: Int): Boolean
+ }
+ class Empty extends IntSet {
+   def contains(x: Int): Boolean = false
+   def incl(x: Int): IntSet =
+     new NonEmpty(x, new Empty, new Empty)
+ }
+***** overriding a def from a superclass
+ class Sub extends Base {
+   override def foo = 2
+   def bar = 3
+ }
+***** for singleton types, define an object, not a class
+ object Empty extends IntSet {
+   def contains(x: Int): Boolean = false
+   def incl(x: Int): IntSet = new NonEmpty(x, Empty, Empty)
+ }
+**** multiple inheritance: use traits, not classes
+ Example:
+   class Square extends Shape with Planar with Movable …
+ Shape is a class. There can be only one.
+ But Planar and Movable are traits.
+ Unlike classes, traits cannot have (value) parameters.
+**** BEWARE: degenerate types
+***** top types
+ Any is literally top.
+ AnyRef and AnyVal are almost top.
+***** bottom types
+ Scala's Nothing
+   ~ Haskell's bottom
+   Member of everything.
+   Uninhabited.
+ Scala's Null
+   "Null is a subtype of every class that inherits from Object; it is incompatible with subtypes of AnyVal."
+*** assertions
+ Just like Python.
+   assert(x >= 0)
+*** imperative | state
+**** "var": like "val" but for stateful variables
+ Once a var is declared, it can be changed (without a keyword):
+   var x = 3
+   x = x+1
+**** a val can have var fields
+ => vals are not necessarily immutable
+**** while loops
+ are stateful -- they require something to update
+ def power(x: Double, exp: Int): Double = {
+   var r = 1.0
+   var i = exp
+   while (i > 0) { r = r * x; i = i - 1 }
+   r
+ }
+**** BEWARE: for loops != for expressions
+ ("for expressions" are described above.)
+***** what it does
+ def foreach(f: A => Unit): Unit =
+   // apply `f` to each element of the collection
+***** example
+   (1 until 3) foreach (i => "abc" foreach (j => println(s"$i $j")))
+ is equivalent to
+   for (i <- 1 until 3; j <- "abc") println(s"$i $j")
+*** classes v. case classes
+ Case classes are immutable,
+ so equality is element equality.
+ In (all?) other cases Scala uses referential equality.
+
+ "creating a class instance requires the keyword new,
+ whereas this is not required for case classes."
+
+ "the case class constructor parameters are promoted to members,
+ whereas this is not the case with regular classes."
+
+ Pattern matching is for case classes,
+ and generally not for classes.
+
+ Case classes cannot extend classes.
+
+ Case classes are special cases of classes,
+ in which Scala generates some code automatically.
+ See bottom of
+ https://www.scala-exercises.org/scala_tutorial/classes_vs_case_classes
+*** polymorphic types
+**** type parameters
+ abstract class Set[A] {
+   def incl(a: A): Set[A]
+   def contains(a: A): Boolean
+ }
+ class Empty[A] extends Set[A] {
+   …
+ }
+ class NonEmpty[A](elem: A, left: Set[A], right: Set[A]) extends Set[A] {
+   …
+ }
+**** generic functions
+   def singleton[A](elem: A) =
+     new NonEmpty[A](elem, new Empty[A], new Empty[A])
+ Now we can call it:
+   singleton[Int](1)
+   singleton[Boolean](true)
+**** type parameters are usually inferrable, so optional
+**** upper and lower bounds
+ def selection[A <: Animal](a1: A, a2: A): A =
+   if (a1.fitness > a2.fitness) a1 else a2
+ can also write
+   A >: Reptile
+   A >: Zebra <: Animal // between Zebra and Animal
+**** subtyping, variance, and covariance: hard
+ https://www.scala-exercises.org/scala_tutorial/polymorphic_type
+***** "covariance"     is when A <: B => C[A] <: C[B]
+ declare like this
+   class C[+A] { … }
+***** "contravariance" is when A <: B => C[A] >: C[B]
+ declare like this
+   class C[-A] { … }
+***** "nonvariance"    is the default
+***** Liskov Substitution Principle
+ If A <: B, then everything one can to do with a value of type B one should also be able to do with a value of type A.
+***** types with mutable elements should not be covariant
+***** immutable types can be covariant, if (?)
+ they didn't finish the thought
+***** subtyping rules for functions
+ Scala uses => for the function type,
+ but I want to use that for implication,
+ so I'll use Haskell notation.
+****** functions are covariant in their return type
+ c < d => a -> c < a -> d
+ Ways to turn money into zebras
+ are a subtype of
+ ways to turn money into mammals.
+****** one-argument functions are contravariant in the argument
+ a < b => a -> c > b -> c
+ Ways to turn money into animals
+ are a subtype of
+ ways to turn pesos into animals.
+ That is,
+ if you have some way of turning (any) money into animals,
+ you have a way of turning pesos into animals.
+****** Those rules can be combined.
+ If A2 <: A1 and B1 <: B2, then
+ A1 => B1 <: A2 => B2
+***** type bounds
+****** example
+ trait Stream[+T] {
+   def prepend[U >: T](elem: U): Stream[U] =
+     Stream.cons(elem, this)
+ }
+ Stream is coveriant in T,
+ so a stream of Giraffes is a subtype of a stream of Animals.
+ T is a lower bound of U,
+ so you can prepend any Aniaml to a stream of Giraffes
+ to get a stream of Animals.
+****** what can be used where
+ Covariant type parameters may appear in lower bounds of method type parameters.
+ Contravariant type parameters may appear in upper bounds of method.
+*** laziness
+**** Stream | LazyList
+ The tutorial talked about Stream, maybe because it's old.
+ val xs = Stream.cons(1, Stream.cons(2, Stream.empty))
+ x #:: xs == Stream.cons(x, xs)
+**** "lazy val" keyword
+ lazy val x = expr
+*** type classes
 **** example
-  (1 until 3) foreach (i => "abc" foreach (j => println(s"$i $j")))
-is equivalent to
-  for (i <- 1 until 3; j <- "abc") println(s"$i $j")
-** classes v. case classes
-Case classes are immutable,
-so equality is element equality.
-In (all?) other cases Scala uses referential equality.
+ def insertionSort[T]             // polymorphic in T
+     (xs: List[T])                // the argument
+     (implicit ord: Ordering[T]): // the constraint
+     List[T] = {                  // return type
+   def insert(y: T, ys: List[T]): List[T] =
+     … if (ord.lt(y, z)) …        // using the constraint
+   … insert(y, insertionSort(ys)) …
+ }
+**** if there's more than one possible implicit def, error
+** introspection
+getClass
+getMethods
+more:
+https://github.com/tjennings/Tyler-s-Scala-Extensions/blob/master/MethodDiscovery.scala
+** importing Java libraries in Scala
+ https://alvinalexander.com/scala/scala-import-java-classes-packages-examples
+ of particular interest: aliases
 
-"creating a class instance requires the keyword new,
-whereas this is not required for case classes."
-
-"the case class constructor parameters are promoted to members,
-whereas this is not the case with regular classes."
-
-Pattern matching is for case classes,
-and generally not for classes.
-
-Case classes cannot extend classes.
-
-Case classes are special cases of classes,
-in which Scala generates some code automatically.
-See bottom of
-https://www.scala-exercises.org/scala_tutorial/classes_vs_case_classes
-** polymorphic types
-*** type parameters
-abstract class Set[A] {
-  def incl(a: A): Set[A]
-  def contains(a: A): Boolean
-}
-class Empty[A] extends Set[A] {
-  …
-}
-class NonEmpty[A](elem: A, left: Set[A], right: Set[A]) extends Set[A] {
-  …
-}
-*** generic functions
-  def singleton[A](elem: A) =
-    new NonEmpty[A](elem, new Empty[A], new Empty[A])
-Now we can call it:
-  singleton[Int](1)
-  singleton[Boolean](true)
-*** type parameters are usually inferrable, so optional
-*** upper and lower bounds
-def selection[A <: Animal](a1: A, a2: A): A =
-  if (a1.fitness > a2.fitness) a1 else a2
-can also write
-  A >: Reptile
-  A >: Zebra <: Animal // between Zebra and Animal
-*** subtyping, variance, and covariance: hard
-Given `Zebra <: Mammal`, is `Field[Zebra] <: Field[Mammal]`?
-
-This seems only apply to classes (not case classes),
-and I don't really want to use them, so I'll skip it.
-** laziness
-*** Stream | LazyList
-The tutorial talked about Stream, maybe because it's old.
-val xs = Stream.cons(1, Stream.cons(2, Stream.empty))
-x #:: xs == Stream.cons(x, xs)
-*** "lazy val" keyword
-lazy val x = expr
-** type classes
-*** example
-def insertionSort[T]             // polymorphic in T
-    (xs: List[T])                // the argument
-    (implicit ord: Ordering[T]): // the constraint
-    List[T] = {                  // return type
-  def insert(y: T, ys: List[T]): List[T] =
-    … if (ord.lt(y, z)) …        // using the constraint
-  … insert(y, insertionSort(ys)) …
-}
-*** if there's more than one possible implicit def, error
 * Saddle
 ** PITFALL: indices can be redundant
 scala> Series(Vec(1,2,3,4), Index("c", "b", "a", "b"))
@@ -483,9 +547,6 @@ return the product of something with the call to itself
 ** a helpful example
 https://www.scala-exercises.org/scala_tutorial/tail_recursion
 at the bottom of the page they rewrite factorial to be tail-rec
-* importing Java libraries in Scala
-https://alvinalexander.com/scala/scala-import-java-classes-packages-examples
-of particular interest: aliases
 * PITFALLS
 ** unreachable variables defined in Main are uninitialized
 if I put this in Main
